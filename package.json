@@ -1,7 +1,7 @@
 {
-  "name": "react-animated-number",
-  "author": "Amey Sakhadeo",
-  "version": "0.4.4",
+  "name": "@plot-and-scatter/react-animated-number",
+  "author": "Amey Sakhadeo, Frank Hangler",
+  "version": "1.0.0",
   "description": "React component for animating numbers",
   "main": "build/index.js",
   "engines": {
@@ -18,11 +18,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ameyms/react-animated-number.git"
+    "url": "https://github.com/plot-and-scatter/react-animated-number.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ameyms/react-animated-number/issues"
+    "url": "https://github.com/plot-and-scatter/react-animated-number/issues"
   },
   "devDependencies": {
     "ava": "^0.24.0",

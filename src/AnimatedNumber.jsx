@@ -46,7 +46,7 @@ export default class AnimatedNumber extends Component {
         initialValue: 0,
         duration: ANIMATION_DURATION,
         frameStyle: () => ({}),
-        value: 0,
+        value: 0
     }
 
     constructor(props) {
@@ -60,6 +60,7 @@ export default class AnimatedNumber extends Component {
         this.prepareTween(this.props);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillReceiveProps(nextProps: AnimatedNumberProps) {
 
         if (this.state.currentValue === nextProps.value) {
@@ -73,6 +74,7 @@ export default class AnimatedNumber extends Component {
         this.prepareTween(nextProps);
     }
 
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillUnmount() {
         this.endTween();
     }

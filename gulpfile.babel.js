@@ -17,8 +17,8 @@ const pkg = JSON.parse(fs.readFileSync('./package.json'));
 function lint(files, options) {
     return () => {
         return gulp.src(files)
-      .pipe($.eslint(options))
-      .pipe($.eslint.format());
+            .pipe($.eslint(options))
+            .pipe($.eslint.format());
     };
 }
 
@@ -26,7 +26,15 @@ gulp.task('clean', del.bind(null, ['build', `${pkg.name}-*.tgz`]));
 
 gulp.task('lint', lint(['src/{,*/}*.js{,x}']));
 
-gulp.task('npmpack', ['build'], () => {
+gulp.task('build', gulp.series('clean', 'lint', () => {
+
+    return gulp.src('src/{,*/}*.js{,x}')
+        .pipe($.plumber())
+        .pipe($.babel())
+        .pipe(gulp.dest('build/'));
+}));
+
+gulp.task('npmpack', gulp.series(['build'], () => {
     return new Promise((resolve, reject) => {
         exec('npm pack', (err, stdout) => {
             if (err) {
@@ -36,9 +44,9 @@ gulp.task('npmpack', ['build'], () => {
             }
         });
     });
-});
+}));
 
-gulp.task('demoInstall', ['npmpack'], () => {
+gulp.task('demoInstall', gulp.series(['npmpack'], () => {
     return new Promise((resolve, reject) => {
         exec(`npm install ../${pkg.name}-${pkg.version}.tgz`, {
             cwd: path.join(__dirname, 'example')
@@ -50,34 +58,30 @@ gulp.task('demoInstall', ['npmpack'], () => {
             }
         });
     });
-});
+}));
 
-gulp.task('demoBuild', ['demoInstall'], () => {
+gulp.task('demoBuild', gulp.series(['demoInstall'], () => {
     return browserify({
         entries: 'example/demo.jsx',
         debug: true,
         transform: [babelify]
     }).bundle()
-    .pipe(srcStream('demo.bundle.js'))
-    .pipe(gulp.dest('example'));
+        .pipe(srcStream('demo.bundle.js'))
+        .pipe(gulp.dest('example'));
 
-});
-
-gulp.task('demo', ['demoBuild', 'watch'], () => {
-    return $.connect.server({
-        root: 'example',
-        livereload: true
-    });
-});
+}));
 
 gulp.task('watch', () => {
     return gulp.watch(['example/*.html', 'src/{,*/}*.js{,x}', 'example/demo.jsx'], ['demoBuild']);
 });
 
-gulp.task('build', ['clean', 'lint'], () => {
+gulp.task('demo', gulp.series('demoBuild', 'watch', () => {
+    return $.connect.server({
+        root: 'example',
+        livereload: true
+    });
+}));
 
-    return gulp.src('src/{,*/}*.js{,x}')
-        .pipe($.plumber())
-        .pipe($.babel())
-        .pipe(gulp.dest('build/'));
-});
+
+
+
